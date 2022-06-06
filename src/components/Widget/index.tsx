@@ -6,6 +6,7 @@ import { gestureHandlerRootHOC } from "react-native-gesture-handler";
 
 import { theme } from "../../theme";
 import { styles } from "./styles";
+import Options from "../Options";
 
 const Widget: React.FC = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -26,10 +27,11 @@ const Widget: React.FC = () => {
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={[1, 280]}
-        children={undefined}
         backgroundStyle={styles.modal}
         handleIndicatorStyle={styles.indicator}
-      ></BottomSheet>
+      >
+        <Options />
+      </BottomSheet>
     </>
   );
 };

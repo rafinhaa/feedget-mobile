@@ -1,21 +1,37 @@
-import React from "react";
+import React, { useRef } from "react";
 import { TouchableOpacity } from "react-native";
 import { ChatTeardropDots } from "phosphor-react-native";
+import BottomSheet from "@gorhom/bottom-sheet";
+import { gestureHandlerRootHOC } from "react-native-gesture-handler";
+
 import { theme } from "../../theme";
 import { styles } from "./styles";
 
 const Widget: React.FC = () => {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const handleOpen = () => {
+    bottomSheetRef.current?.expand();
+  };
+
   return (
     <>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleOpen}>
         <ChatTeardropDots
           size={24}
           weight="bold"
           color={theme.colors.text_on_brand_color}
         />
       </TouchableOpacity>
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={[1, 280]}
+        children={undefined}
+        backgroundStyle={styles.modal}
+        handleIndicatorStyle={styles.indicator}
+      ></BottomSheet>
     </>
   );
 };
 
-export default Widget;
+export default gestureHandlerRootHOC(Widget) as React.FC;

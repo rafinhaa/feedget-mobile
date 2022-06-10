@@ -11,6 +11,7 @@ import { captureScreen } from "react-native-view-shot";
 import { theme } from "../../theme";
 
 import { styles } from "./styles";
+import { api } from "../../lib/api";
 
 interface Props {
   feedbackType: FeedbackType;
@@ -25,6 +26,8 @@ const Form: React.FC<Props> = ({
 }) => {
   const feedbackInfo = feedbackTypes[feedbackType];
   const [screenShot, setScreenShot] = useState<string | null>(null);
+  const [isFeedbackSent, setIsFeedbackSent] = useState(false);
+  const [comment, setComment] = useState("");
 
   const handleScreenShot = () => {
     captureScreen({
@@ -41,6 +44,25 @@ const Form: React.FC<Props> = ({
 
   const handleRemoveScreenShot = () => {
     setScreenShot(null);
+  };
+
+  const handleSendFeedback = async () => {
+    if (isFeedbackSent) return;
+
+    setIsFeedbackSent(true);
+
+    try {
+      await api.post("/feedbacks", {
+        type: feedbackType,
+        screenShot,
+        comment,
+      });
+      onFeedbackSent();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsFeedbackSent(false);
+    }
   };
 
   return (
@@ -63,6 +85,8 @@ const Form: React.FC<Props> = ({
         style={styles.input}
         placeholder="Algo não está funcionando bem? Queremos corrigir. Conte com detalhes o que está acontecendo..."
         placeholderTextColor={theme.colors.text_secondary}
+        autoCorrect={false}
+        onChangeText={setComment}
       />
       <View style={styles.footer}>
         <ScreenShotButton
@@ -70,7 +94,7 @@ const Form: React.FC<Props> = ({
           onTakeShot={handleScreenShot}
           screenshot={screenShot}
         />
-        <Button isLoading={false} onPress={() => {}} />
+        <Button isLoading={isFeedbackSent} onPress={handleSendFeedback} />
       </View>
     </View>
   );

@@ -14,9 +14,15 @@ import { styles } from "./styles";
 
 interface Props {
   feedbackType: FeedbackType;
+  onFeedbackCanceled: () => void;
+  onFeedbackSent: () => void;
 }
 
-const Form: React.FC<Props> = ({ feedbackType }) => {
+const Form: React.FC<Props> = ({
+  feedbackType,
+  onFeedbackCanceled,
+  onFeedbackSent,
+}) => {
   const feedbackInfo = feedbackTypes[feedbackType];
   const [screenShot, setScreenShot] = useState<string | null>(null);
 
@@ -40,7 +46,7 @@ const Form: React.FC<Props> = ({ feedbackType }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onFeedbackCanceled}>
           <ArrowLeft
             size={24}
             weight="bold"

@@ -7,6 +7,7 @@ import ScreenShotButton from "../ScreenShotButton";
 import Button from "../Button";
 import { feedbackTypes } from "../../utils/feedbackTypes";
 import { captureScreen } from "react-native-view-shot";
+import * as fileSystem from "expo-file-system";
 
 import { theme } from "../../theme";
 
@@ -50,11 +51,16 @@ const Form: React.FC<Props> = ({
     if (isFeedbackSent) return;
 
     setIsFeedbackSent(true);
+    const screenshotBase64 =
+      screenShot &&
+      (await fileSystem.readAsStringAsync(screenShot, {
+        encoding: "base64",
+      }));
 
     try {
       await api.post("/feedbacks", {
         type: feedbackType,
-        screenShot,
+        screenshot: `data:image/png;base64,${screenshotBase64}`,
         comment,
       });
       onFeedbackSent();
